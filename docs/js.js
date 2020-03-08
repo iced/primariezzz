@@ -16,7 +16,8 @@ function parseData(d) {
     });
 
     total = {
-        population: 0
+        population: 0,
+        voted: 0,
     };
     _.each(clowns, function(clown) {
         total[clown] = 0;
@@ -35,10 +36,9 @@ function parseData(d) {
             total[clown] += r[clown];
         });
         r["voted"] = t;
-        r["voted_percentage"] = r["voted"] / r["population"];
+        total["voted"] += t;
         return r;
     });
-    total["voted_percentage"] = total["voted"] / total["population"];
 }
 
 function grad(palette, l, r, v) {
@@ -56,7 +56,17 @@ function grad(palette, l, r, v) {
     return "#" + rgb.join("");
 }
 
-function drawResults() {
+function drawMap() {
+    themap = L.map("map").setView([54.0, 27.0], 6);
+    L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
+        attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+        maxZoom: 18,
+        id: "mapbox/light-v9",
+        tileSize: 512,
+        zoomOffset: -1,
+        accessToken: "pk.eyJ1IjoidGhlaWNlZCIsImEiOiJjazdqMTN2MW0wb3A1M2VvMm84enBkc21oIn0.twBqvzeUoRo1BxvwoZb87A"
+    }).addTo(themap);
+
     minp = _.min(data, function(e) {
         return e.population;
     }).population;
@@ -64,22 +74,24 @@ function drawResults() {
         return e.population;
     }).population;
     minvp = _.min(data, function(e) {
-        return e.voted_percentage;
-    }).voted_percentage;
+        return e.voted / e.population;
+    });
+    minvp = minvp.voted / minvp.population;
     maxvp = _.max(data, function(e) {
-        return e.voted_percentage;
-    }).voted_percentage;
+        return e.voted / e.population;
+    });
+    maxvp = maxvp.voted / maxvp.population;
     _.each(data, function(e) {
         tooltip = "<table>";
-        tooltip += "<tr><td><strong>" + e.city + "</strong></td><td class=\"tooltip-right\"><strong>" + e.population + "</strong></td></tr>";
+        tooltip += "<tr><td><strong>" + e.city + "</strong></td><td class=\"ralign\"><strong>" + e.population + "</strong></td></tr>";
         tooltip += _.map(clowns, function(clown) {
-            return "<tr><td>" + clown + "</td><td class=\"tooltip-right\">" + e[clown] + "</td></tr>";
+            return "<tr><td>" + clown + "</td><td class=\"ralign\">" + e[clown] + "</td></tr>";
         }).join("");
         tooltip += "</table>";
         L.circle(e.coordinates, {
             radius: 1000 + (5000 - 1000) * ((e.population - minp) / (maxp - minp)),
             weight: 1,
-            color: grad([[223, 218, 135], [101, 67, 33]], minvp, maxvp, e.voted_percentage),
+            color: grad([[223, 218, 135], [101, 67, 33]], minvp, maxvp, e.voted / e.population),
         }).bindTooltip(tooltip).addTo(themap);
     });
 
@@ -102,24 +114,58 @@ function drawResults() {
     themap.fitBounds([minlatlng, maxlatlng]);
 }
 
+function drawTable() {
+    var t = "";
+    t += "<thead>";
+    t += "<tr>";
+    t += "<td rowspan=\"2\">Город</td>";
+    t += "<td rowspan=\"2\">Население</td>";
+    t += "<td colspan=\"2\">Проголосовало</td>";
+    _.each(clowns, function(clown) {
+        t += "<td colspan=\"3\">" + clown + "</td>";
+    });
+    t += "</tr>";
+    t += "<tr>";
+    t += "<td>#</td>";
+    t += "<td>%</td>";
+    _.each(clowns, function(clown) {
+        t += "<td>#</td>";
+        t += "<td>%</td>";
+        t += "<td>%%</td>"
+    });
+    t += "</tr>";
+    t += "</thead>";
+
+    _.each(data.concat([total]), function(e) {
+        t += "<tr>";
+        if (e.city === undefined) {
+            t += "<td><strong>Всего</strong></td>";
+        } else {
+            t += "<td>" + e.city + "</td>";
+        }
+        t += "<td>" + e.population + "</td>";
+        t += "<td>" + e.voted + "</td>";
+        t += "<td>" + sprintf("%.3f", (e.voted / e.population) * 100) + "</td>";
+        _.each(clowns, function(clown) {
+            t += "<td>" + e[clown] + "</td>";
+            t += "<td>" + sprintf("%.3f", (e[clown] / e.voted) * 100) + "</td>";
+            t += "<td>" + sprintf("%.3f", (e[clown] / e.population) * 100) + "</td>";
+        });
+        t += "</tr>";
+    });
+
+    $("#table").append(t);
+}
+
 $(document).ready(function() {
     $(".menu .item").tab();
-
-    themap = L.map("map").setView([54.0, 27.0], 6);
-    L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
-        attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
-        maxZoom: 18,
-        id: "mapbox/light-v9",
-        tileSize: 512,
-        zoomOffset: -1,
-        accessToken: "pk.eyJ1IjoidGhlaWNlZCIsImEiOiJjazdqMTN2MW0wb3A1M2VvMm84enBkc21oIn0.twBqvzeUoRo1BxvwoZb87A"
-    }).addTo(themap);
 
     $.ajax({
         url: "https://raw.githubusercontent.com/iced/primariezzz/master/results.csv",
         success: function(d) {
             parseData(d);
-            drawResults();
+            drawMap();
+            drawTable();
         }
     });
 });
