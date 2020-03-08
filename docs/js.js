@@ -48,7 +48,8 @@ $(document).ready(function() {
                 return e.population;
             }).population;
             _.each(data, function(e) {
-                tooltip = "<table>";
+                tooltip = "<strong>" + e.city + "</strong><br />";
+                tooltip += "<table>";
                 tooltip += _.map(clowns, function(clown) {
                     return "<tr><td>" + clown + "</td><td>" + e[clown] + "</td></tr>";
                 }).join("");
