@@ -91,7 +91,7 @@ function drawMap() {
         L.circle(e.coordinates, {
             radius: 1000 + (5000 - 1000) * ((e.population - minp) / (maxp - minp)),
             weight: 1,
-            color: grad([[223, 218, 135], [101, 67, 33]], minvp, maxvp, e.voted / e.population),
+            color: grad([[0, 255, 0], [255, 0, 0]], minvp, maxvp, e.voted / e.population),
         }).bindTooltip(tooltip).addTo(themap);
     });
 
