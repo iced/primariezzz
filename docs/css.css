@@ -6,10 +6,22 @@
      height: 600px;
 }
 
-.ralign {
-    text-align: right;
+.clown0 {
+    background: #00bfff;
 }
 
-#table {
-    font-size: 0.8em;
+.clown1 {
+    background: #fffacd;
+}
+
+.clown2 {
+    background: #48d1cc;
+}
+
+.clown3 {
+    background: #f4a460;
+}
+
+.clown4 {
+    background: #ff69b4;
 }

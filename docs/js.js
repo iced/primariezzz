@@ -83,7 +83,7 @@ function drawMap() {
     maxvp = maxvp.voted / maxvp.population;
     _.each(data, function(e) {
         tooltip = "<table>";
-        tooltip += "<tr><td><strong>" + e.city + "</strong></td><td class=\"ralign\"><strong>" + e.population + "</strong></td></tr>";
+        tooltip += "<tr><td><strong>" + e.city + "</strong></td><td class=\"right aligned\"><strong>" + e.population + "</strong></td></tr>";
         tooltip += _.map(clowns, function(clown) {
             return "<tr><td>" + clown + "</td><td class=\"ralign\">" + e[clown] + "</td></tr>";
         }).join("");
@@ -121,17 +121,17 @@ function drawTable() {
     t += "<td rowspan=\"2\">Город</td>";
     t += "<td rowspan=\"2\">Население</td>";
     t += "<td colspan=\"2\">Проголосовало</td>";
-    _.each(clowns, function(clown) {
-        t += "<td colspan=\"3\">" + clown + "</td>";
+    _.each(clowns, function(clown, i) {
+        t += "<td colspan=\"3\" class=\"clown" + i + "\">" + clown + "</td>";
     });
     t += "</tr>";
     t += "<tr>";
     t += "<td>#</td>";
     t += "<td>%</td>";
-    _.each(clowns, function(clown) {
-        t += "<td>#</td>";
-        t += "<td>%</td>";
-        t += "<td>%%</td>"
+    _.each(clowns, function(clown, i) {
+        t += "<td class=\"clown" + i + "\">#</td>";
+        t += "<td class=\"clown" + i + "\">%</td>";
+        t += "<td class=\"clown" + i + "\">Z%</td>"
     });
     t += "</tr>";
     t += "</thead>";
@@ -143,13 +143,13 @@ function drawTable() {
         } else {
             t += "<td>" + e.city + "</td>";
         }
-        t += "<td>" + e.population + "</td>";
-        t += "<td>" + e.voted + "</td>";
-        t += "<td>" + sprintf("%.3f", (e.voted / e.population) * 100) + "</td>";
-        _.each(clowns, function(clown) {
-            t += "<td>" + e[clown] + "</td>";
-            t += "<td>" + sprintf("%.3f", (e[clown] / e.voted) * 100) + "</td>";
-            t += "<td>" + sprintf("%.3f", (e[clown] / e.population) * 100) + "</td>";
+        t += "<td class=\"right aligned\">" + e.population + "</td>";
+        t += "<td class=\"right aligned\">" + e.voted + "</td>";
+        t += "<td class=\"right aligned\">" + sprintf("%.3f", (e.voted / e.population) * 100) + "</td>";
+        _.each(clowns, function(clown, i) {
+            t += "<td class=\"right aligned clown" + i + "\">" + e[clown] + "</td>";
+            t += "<td class=\"right aligned clown" + i + "\">" + sprintf("%.3f", (e[clown] / e.population) * 100) + "</td>";
+            t += "<td class=\"right aligned clown" + i + "\">" + sprintf("%.3f", (e[clown] / e.voted) * 100) + "</td>";
         });
         t += "</tr>";
     });
