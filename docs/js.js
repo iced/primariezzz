@@ -142,7 +142,7 @@ function drawTable() {
         var se = "";
         if (e.city === undefined) {
             t += "<td><strong>Всего</strong></td>";
-            ss = "<strong>;
+            ss = "<strong>";
             se = "</strong>";
         } else {
             t += "<td>" + e.city + "</td>";
