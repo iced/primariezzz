@@ -138,22 +138,23 @@ function drawTable() {
 
     _.each(data.concat([total]), function(e) {
         t += "<tr>";
+        var ss = "";
+        var se = "";
         if (e.city === undefined) {
-            t += "<strong><td>Всего</td>";
+            t += "<td><strong>Всего</strong></td>";
+            ss = "<strong>;
+            se = "</strong>";
         } else {
             t += "<td>" + e.city + "</td>";
         }
-        t += "<td class=\"right aligned\">" + e.population + "</td>";
-        t += "<td class=\"right aligned\">" + e.voted + "</td>";
-        t += "<td class=\"right aligned\">" + sprintf("%.3f", (e.voted / e.population) * 100) + "</td>";
+        t += "<td class=\"right aligned\">" + ss + e.population + se + "</td>";
+        t += "<td class=\"right aligned\">" + ss + e.voted + se + "</td>";
+        t += "<td class=\"right aligned\">" + ss + sprintf("%.3f", (e.voted / e.population) * 100) + se + "</td>";
         _.each(clowns, function(clown, i) {
-            t += "<td class=\"right aligned clown" + i + "\">" + e[clown] + "</td>";
-            t += "<td class=\"right aligned clown" + i + "\">" + sprintf("%.3f", (e[clown] / e.population) * 100) + "</td>";
-            t += "<td class=\"right aligned clown" + i + "\">" + sprintf("%.3f", (e[clown] / e.voted) * 100) + "</td>";
+            t += "<td class=\"right aligned clown" + i + "\">" + ss + e[clown] + se + "</td>";
+            t += "<td class=\"right aligned clown" + i + "\">" + ss + sprintf("%.3f", (e[clown] / e.population) * 100) + se + "</td>";
+            t += "<td class=\"right aligned clown" + i + "\">" + ss + sprintf("%.3f", (e[clown] / e.voted) * 100) + se + "</td>";
         });
-        if (e.city === undefined) {
-            t += "</strong>";
-        }        
         t += "</tr>";
     });
 
