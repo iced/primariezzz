@@ -139,7 +139,7 @@ function drawTable() {
     _.each(data.concat([total]), function(e) {
         t += "<tr>";
         if (e.city === undefined) {
-            t += "<td><strong>Всего</strong></td>";
+            t += "<strong><td>Всего</td>";
         } else {
             t += "<td>" + e.city + "</td>";
         }
@@ -151,6 +151,9 @@ function drawTable() {
             t += "<td class=\"right aligned clown" + i + "\">" + sprintf("%.3f", (e[clown] / e.population) * 100) + "</td>";
             t += "<td class=\"right aligned clown" + i + "\">" + sprintf("%.3f", (e[clown] / e.voted) * 100) + "</td>";
         });
+        if (e.city === undefined) {
+            t += "</strong>";
+        }        
         t += "</tr>";
     });
 
