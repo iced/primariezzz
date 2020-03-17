@@ -31,7 +31,11 @@ function parseData(d) {
         total["population"] += r["population"];
         var t = parseInt(e[e.length - 1]);
         _.each(clowns, function(clown, i) {
-            r[clown] = parseInt(e[3 + i]);
+            if (e[3 + i] == "-") {
+                r[clown] = 0;
+            } else {
+                r[clown] = parseInt(e[3 + i]);
+            }
             t += r[clown];
             total[clown] += r[clown];
         });
